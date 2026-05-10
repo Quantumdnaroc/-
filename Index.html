@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+      body { font-family: 'Inter', 'Noto Sans TC', sans-serif; background-color: #f8fbff; color: #334155; padding-bottom: 140px; }
+      .blue-glow { position: fixed; width: 60vw; height: 60vw; background: radial-gradient(circle, rgba(59,130,246,0.06) 0%, transparent 70%); top: -10vw; right: -10vw; z-index: -1; filter: blur(100px); }
+      .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 20px 50px rgba(59, 130, 246, 0.03); }
+      
+      /* 經歷清單樣式：移除黑點並加入藍點 */
+      .list-item { position: relative; padding-left: 24px; margin-bottom: 12px; list-style: none; }
+      .list-item::before { content: "•"; position: absolute; left: 0; color: #3b82f6; font-weight: bold; }
+      
+      .footer-blur { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 700px; background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 50px; padding: 20px; text-align: center; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+      
+      /* 圖片載入動畫 */
+      .loading-spinner { border: 3px solid #f3f3f3; border-top: 3px solid #3b82f6; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+      @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+  </head>
+  <body class="p-4 md:p-12 lg:p-20">
+    <div class="blue-glow"></div>
+    <? const p = getMyDetailedProfile(); ?>
+
+    <main class="max-w-7xl mx-auto glass-card rounded-[50px] overflow-hidden flex flex-col lg:flex-row">
+      <!-- 左側：個人標牌 -->
+      <aside class="lg:w-[380px] p-12 border-b lg:border-b-0 lg:border-r border-slate-100 flex flex-col items-center lg:items-start shrink-0">
+        
+        <!-- 圓形圖片容器 (非同步載入) -->
+        <div class="relative w-48 h-48 rounded-full overflow-hidden bg-slate-50 mb-8 border-4 border-white shadow-xl flex items-center justify-center">
+          <div id="loader" class="loading-spinner"></div>
+          <img id="userPhoto" src="" class="hidden w-full h-full object-cover" alt="<?= p.name ?>">
+        </div>
+
+        <h1 class="text-4xl font-bold text-slate-800 mb-2"><?= p.name ?></h1>
+        <p class="text-blue-500 font-bold text-xs tracking-[0.3em] uppercase mb-10 italic"><?= p.nickname ?></p>
+        
+        <div class="w-full space-y-6 pt-10 border-t border-slate-100">
+          <div class="space-y-4">
+            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Contact Me</span>
+            <? p.contactApps.forEach((app, i) => { ?>
+              <div class="flex justify-between items-center bg-blue-50/50 p-3 rounded-2xl border border-blue-100 hover:bg-blue-100/50 transition-colors">
+                <span class="text-xs font-bold text-blue-600"><?= app ?></span>
+                <span class="text-sm font-medium text-slate-700"><?= p.contactIDs[i] ?></span>
+              </div>
+            <? }); ?>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 右側：清單內容區 -->
+      <section class="flex-1 p-8 lg:p-16 space-y-12">
+        <div>
+          <div class="flex items-center gap-4 mb-6">
+            <span class="text-[10px] font-black text-blue-400 uppercase tracking-[0.3em]">Current Role / 現任動態</span>
+            <div class="h-[1px] flex-1 bg-blue-50"></div>
+          </div>
+          <div class="space-y-2">
+            <? p.currentRoles.forEach(role => { ?>
+              <div class="text-lg font-semibold text-slate-800 list-item"><?= role ?></div>
+            <? }); ?>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+          <div class="bg-white/40 p-8 rounded-[32px] border border-white">
+            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-4">Experience / 曾任經歷</span>
+            <? p.expWorks.forEach(exp => { ?> <div class="list-item text-sm text-slate-600"><?= exp ?></div> <? }); ?>
+          </div>
+          <div class="bg-white/40 p-8 rounded-[32px] border border-white">
+            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-4">Activities / 活動經歷</span>
+            <? p.expActivities.forEach(act => { ?> <div class="list-item text-sm text-slate-600"><?= act ?></div> <? }); ?>
+          </div>
+        </div>
+
+        <div class="bg-white/40 p-8 rounded-[32px] border border-white">
+          <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-4">Competitions / 競賽表現</span>
+          <? p.compExps.forEach(comp => { ?> <div class="list-item text-sm text-slate-600"><?= comp ?></div> <? }); ?>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer-blur">
+      <p class="text-slate-600 font-bold tracking-[0.4em] uppercase text-xs">
+        <span class="text-blue-500 mr-2">✦</span> <?= p.education ?> · <?= p.title ?> · Personal Portfolio
+      </p>
+    </footer>
+
+    <!-- 非同步載入圖片的 JavaScript -->
+    <script>
+      window.onload = function() {
+        google.script.run
+          .withSuccessHandler(function(base64) {
+            const img = document.getElementById('userPhoto');
+            const loader = document.getElementById('loader');
+            img.src = base64;
+            img.classList.remove('hidden');
+            loader.classList.add('hidden');
+          })
+          .getProfilePhoto();
+      };
+    </script>
+  </body>
+</html>
